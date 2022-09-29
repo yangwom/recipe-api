@@ -35,7 +35,7 @@ public class RecipesController : ControllerBase
     {
         var recipeName = _service.GetRecipe(name);
 
-        if (name != recipeName.Name)
+        if (recipeName is null)
         {
             return NotFound();
         }
