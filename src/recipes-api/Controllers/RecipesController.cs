@@ -12,43 +12,60 @@ namespace recipes_api.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class RecipesController : ControllerBase
-{    
+{
     public readonly IRecipeService _service;
-    
+
     public RecipesController(IRecipeService service)
     {
-        this._service = service;        
+        this._service = service;
     }
 
     //Read
-    [HttpGet]
+    [HttpGet()]
     public IActionResult Get()
     {
-        throw new NotImplementedException();    
+        var recipes = _service.GetRecipes();
+
+        return Ok(recipes);
     }
 
     //Read
     [HttpGet("{name}", Name = "GetRecipe")]
     public IActionResult Get(string name)
-    {                
-        throw new NotImplementedException();
+    {
+        var recipeName = _service.GetRecipe(name);
+
+        if (name != recipeName.Name)
+        {
+            return NotFound();
+        }
+
+
+        return Ok(recipeName);
     }
 
     [HttpPost]
-    public IActionResult Create([FromBody]Recipe recipe)
+    public IActionResult Create([FromBody] Recipe recipe)
     {
-        throw new NotImplementedException();
+        if (recipe is null) return BadRequest();
+        _service.AddRecipe(recipe);
+        return CreatedAtAction("GetRecipe", new { name = recipe.Name }, recipe);
     }
 
     [HttpPut("{name}")]
-    public IActionResult Update(string name, [FromBody]Recipe recipe)
+    public IActionResult Update(string name, [FromBody] Recipe recipe)
     {
-        throw new NotImplementedException();
+        if (recipe == null || name != recipe.Name) return BadRequest();
+        _service.UpdateRecipe(recipe);
+        return NoContent();
     }
 
     [HttpDelete("{name}")]
     public IActionResult Delete(string name)
     {
-        throw new NotImplementedException();
-    }    
+        bool check = _service.RecipeExists(name);
+        if (!check) return NotFound();
+        _service.DeleteRecipe(name);
+        return NoContent();
+    }
 }
