@@ -21,7 +21,7 @@ public class RecipesController : ControllerBase
     }
 
     //Read
-    [HttpGet()]
+    [HttpGet]
     public IActionResult Get()
     {
         var recipes = _service.GetRecipes();
@@ -35,12 +35,7 @@ public class RecipesController : ControllerBase
     {
         var recipeName = _service.GetRecipe(name);
 
-        if (recipeName is null)
-        {
-            return NotFound();
-        }
-
-
+        if (recipeName is null) return NotFound();
         return Ok(recipeName);
     }
 
